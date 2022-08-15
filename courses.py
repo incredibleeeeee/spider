@@ -18,7 +18,6 @@ headers = {
     'Sec-Fetch-Mode': 'cors',
     'Sec-Fetch-Site': 'same-origin',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.3',
-
 }
 
 response = requests.get(url=url, headers=headers)
@@ -35,18 +34,40 @@ for i in response:
     cource_name.append(i['course']['nameZh'])
     limitCount.append(i['limitCount'])
 
-print(id)
-print(cource_name)
-print(limitCount)
+# print(id)
+# print(cource_name)
+# print(limitCount)
 
 para = {
-    'lessonIds': '0',
+    'lessonIds': '',
 }
 
 for i in range(0, len(id)):
-    para['lessonIds'] = id[i]
-    response = requests.get(url=url1, headers=headers, params=para)
-    response.encoding = 'utf-8'
-    response = json.loads(response.text)
-    sum = response['data']['{}'.format(id[i])]
-    print(str(sum) + '/' + str(limitCount[i]))
+    para['lessonIds'] = para['lessonIds'] + str(id[i]) + ','
+
+para['lessonIds'] = para['lessonIds'][0:-1]
+
+response = requests.get(url=url1, headers=headers, params=para)
+response.encoding = 'utf-8'
+response = json.loads(response.text)['data']
+
+# print(response)
+
+keys = list(response.keys())
+value = list(response.values())
+
+for i, j in zip(keys, value):
+    print(str(j) + '/', end='')
+    for x in range(len(id)):
+        if str(id[x]) == i:
+            print(limitCount[x], end='      ')
+            print(cource_name[x])
+            break
+# 分别请求
+# for i in range(0, len(id)):
+#     para['lessonIds'] = id[i]
+#     response = requests.get(url=url1, headers=headers, params=para)
+#     response.encoding = 'utf-8'
+#     response = json.loads(response.text)
+#     sum = response['data']['{}'.format(id[i])]
+#     print(str(sum) + '/' + str(limitCount[i]))
